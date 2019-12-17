@@ -1,0 +1,46 @@
+{% extends 'login/base.html' %}
+
+{% block title %}主页{% endblock %}
+
+{% block content %}
+    {% if request.session.is_login %}
+        {% if request.session.is_back %}
+            <h1>你好,{{ request.session.user_name }}！欢迎回来！</h1>
+        {% endif %}
+
+        {% if message %}
+        <div class="alert alert-warning">{{ message }}</div>
+        {% endif %}
+
+        <table class="table">
+                <th>请求修改者用户id</th><th>垃圾名称</th><th>垃圾种类</th><th>更改类型</th><th>提交审核时间</th><th>审核通过</th><th>审核不通过/删除</th>
+                {% for row in wait_review %}
+                    <tr>
+                        <td>{{ row.userid }}</td>
+                        <td>{{ row.name }}</td>
+                        <td>{{ row.mtype }}</td>
+                        <td>{{ row.method }}</td>
+                        <td>{{ row.datetime }}</td>
+                        <td>
+                            <form class="form-login" action="/review_index/" method="post">
+                                <input name="edit_id_submit" type="hidden" autocomplete="off" value="{{ row.id }}">
+                                <input name="userid" type="hidden" autocomplete="off" value="{{row.userid}}">
+                                <button class="btn btn-primary">审核通过</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form class='form-login' action="/review_index/" method="post">
+                                <input name="edit_id_delete" type="hidden" autocomplete="off" value="{{ row.id }}">
+                                <input name="userid" type="hidden" autocomplete="off" value="{{row.userid}}">
+                                <button class="btn btn-default">审核不通过</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+        </table>
+
+    {% else %}
+        <h1>你尚未登录，请点击右上角登录按钮！</h1>
+    {% endif %}
+
+{% endblock %}
